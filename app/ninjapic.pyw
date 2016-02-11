@@ -1,5 +1,4 @@
 from surface import Surface
-from PyQt4.QtCore import QBuffer, QByteArray, QIODevice, QString, SIGNAL, SLOT
 from PyQt4.QtGui import (QApplication, QSystemTrayIcon, QIcon, QMenu, QAction,
         QImage, QKeySequence)
 from imgurpython import ImgurClient
