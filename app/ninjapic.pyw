@@ -27,8 +27,6 @@ class trayApp(QSystemTrayIcon):
 
     def createSysTrayActions(self):
         self.sysTrayMenuRegionAction = self.createAction("&Capture region", self.createDrawSurface, "Alt+C")
-        # not implemented yet
-        self.sysTrayMenuFullscreenAction = self.createAction("&Capture full screen", self.createDrawSurface, "Alt+X")
         self.sysTrayMenuUploadAction = self.createAction("&Upload to imgur", slot=self.updateSettings, checkable=True)
         self.sysTrayMenuUploadAction.setChecked(self.upload)
         self.sysTrayMenuSaveAction = self.createAction("&Save locally", slot=self.updateSettings, checkable=True)
