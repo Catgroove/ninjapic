@@ -34,7 +34,6 @@ class trayApp(QSystemTrayIcon):
         self.sysTrayMenuExitAction = self.createAction("&Exit", self.quit)
 
         self.addActions(self.sysTrayMenu, (self.sysTrayMenuRegionAction,
-                                           self.sysTrayMenuFullscreenAction,
                                            None,
                                            self.sysTrayMenuUploadAction,
                                            self.sysTrayMenuSaveAction,
