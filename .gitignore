@@ -46,11 +46,12 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-# Python
+# Ninjapic/Python
 *.pyc
 *.pyo
 *.bmp
 *.png
 *.jpg
 *.gif
+!icon.png
 
