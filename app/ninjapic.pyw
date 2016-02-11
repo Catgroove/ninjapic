@@ -74,10 +74,6 @@ class trayApp(QSystemTrayIcon):
         self.sysTrayMenuRegionGlobalHotkey.setShortcut(QKeySequence("Alt+C"))
         self.sysTrayMenuRegionGlobalHotkey.activated.connect(self.createDrawSurface)
 
-    # TODO: Need to rewrite this whole function to handle:
-    #   * Random filename and check if it exists and succeeds in saving
-    #   * Look into a way where I don't have to save the image in order to upload it
-    #   (probably need to use another host since imgur uploading is extremely slow, maybe set up my own)
     def storeImage(self):
         if not self.surface.image.save("screenshot.png", "PNG", -1):
             return "Couldn't save image: Something went wrong."
