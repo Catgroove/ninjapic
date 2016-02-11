@@ -1,0 +1,4 @@
+imgurpython==1.1.6
+PyGlobalShortcut==0.2.1
+requests==2.9.1
+wheel==0.29.0
