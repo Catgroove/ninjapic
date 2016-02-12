@@ -1,6 +1,6 @@
 from surface import Surface
 from PyQt4.QtGui import (QApplication, QSystemTrayIcon, QIcon, QMenu, QAction,
-        QImage, QKeySequence)
+                         QKeySequence)
 from imgurpython import ImgurClient
 from pygs import QxtGlobalShortcut
 
@@ -85,15 +85,18 @@ class trayApp(QSystemTrayIcon):
 
     def updateSettings(self):
         self.upload = self.sysTrayMenuUploadAction.isChecked()
-        self.save =  self.sysTrayMenuSaveAction.isChecked()
+        self.save = self.sysTrayMenuSaveAction.isChecked()
 
     def quit(self):
         self.deleteLater()
-        app.exit()
+        QApplication.exit()
 
 
-if __name__ == "__main__":
+def main():
     app = QApplication(sys.argv)
     tray_app = trayApp()
     tray_app.show()
     sys.exit(app.exec_())
+
+if __name__ == "__main__":
+    main()

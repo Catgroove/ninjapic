@@ -1,5 +1,4 @@
-from helpers import cropImage, getScreenDimensions
-from screenshot import Screenshot
+from helpers import cropImage, getScreenDimensions, captureFullScreen
 
 from PyQt4.QtCore import Qt, QRect, QSize, QPoint, pyqtSignal, QObject
 from PyQt4.QtGui import QLabel, QApplication, QCursor, QRubberBand
@@ -19,7 +18,7 @@ class Surface(QLabel):
 
     def prepareSurface(self):
         """Cover the entire screen with a screenshot of the screen."""
-        self.surfaceImage = Screenshot().captureFullScreen()
+        self.surfaceImage = captureFullScreen()
         self.setPixmap(self.surfaceImage)
         self.rubberband = QRubberBand(QRubberBand.Rectangle, self)
 
