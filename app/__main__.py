@@ -1,4 +1,5 @@
 from surface import Surface
+from PyQt4.QtCore import QSettings
 from PyQt4.QtGui import (QApplication, QSystemTrayIcon, QIcon, QMenu, QAction,
                          QKeySequence)
 from imgurpython import ImgurClient
@@ -13,8 +14,7 @@ class trayApp(QSystemTrayIcon):
     def __init__(self, parent=None):
         super(trayApp, self).__init__(parent)
         self.setIcon(QIcon("icon.png"))
-        self.upload = True
-        self.save = False
+        self.loadSettings()
         self.createSysTrayMenu()
         self.createSysTrayActions()
         self.setGlobalHotkeys()
@@ -61,6 +61,16 @@ class trayApp(QSystemTrayIcon):
             else:
                 target.addAction(action)
 
+    def loadSettings(self):
+        settings = QSettings("ninjapic", "settings")
+        self.upload = settings.value("upload").toBool()
+        self.save = settings.value("save").toBool()
+
+    def saveSettings(self):
+        settings = QSettings("ninjapic", "settings")
+        settings.setValue("upload", self.sysTrayMenuUploadAction.isChecked())
+        settings.setValue("save", self.sysTrayMenuSaveAction.isChecked())
+
     def createDrawSurface(self):
         self.surface = Surface()
         self.surface.imageReady.connect(self.storeImage)
@@ -88,6 +98,7 @@ class trayApp(QSystemTrayIcon):
         self.save = self.sysTrayMenuSaveAction.isChecked()
 
     def quit(self):
+        self.saveSettings()
         self.deleteLater()
         QApplication.exit()
 
