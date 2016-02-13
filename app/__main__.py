@@ -27,9 +27,9 @@ class trayApp(QSystemTrayIcon):
 
     def createSysTrayActions(self):
         self.sysTrayMenuRegionAction = self.createAction("&Capture region", self.createDrawSurface, "Alt+C")
-        self.sysTrayMenuUploadAction = self.createAction("&Upload to imgur", slot=self.updateSettings, checkable=True)
+        self.sysTrayMenuUploadAction = self.createAction("&Upload to imgur", checkable=True)
         self.sysTrayMenuUploadAction.setChecked(self.upload)
-        self.sysTrayMenuSaveAction = self.createAction("&Save locally", slot=self.updateSettings, checkable=True)
+        self.sysTrayMenuSaveAction = self.createAction("&Save locally", checkable=True)
         self.sysTrayMenuSaveAction.setChecked(self.save)
         self.sysTrayMenuExitAction = self.createAction("&Exit", self.quit)
 
@@ -92,10 +92,6 @@ class trayApp(QSystemTrayIcon):
                 webbrowser.open(link)
         if not self.save:
             os.remove("screenshot.png")
-
-    def updateSettings(self):
-        self.upload = self.sysTrayMenuUploadAction.isChecked()
-        self.save = self.sysTrayMenuSaveAction.isChecked()
 
     def quit(self):
         self.saveSettings()
