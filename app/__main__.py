@@ -1,7 +1,7 @@
 from surface import Surface
 from PyQt4.QtCore import QSettings
 from PyQt4.QtGui import (QApplication, QSystemTrayIcon, QIcon, QMenu, QAction,
-                         QKeySequence)
+                         QKeySequence, QInputDialog, QLineEdit)
 from imgurpython import ImgurClient
 from pygs import QxtGlobalShortcut
 
@@ -13,8 +13,8 @@ import webbrowser
 class trayApp(QSystemTrayIcon):
     def __init__(self, parent=None):
         super(trayApp, self).__init__(parent)
-        self.setIcon(QIcon("icon.png"))
         self.loadSettings()
+        self.setIcon(QIcon("icon.png"))
         self.createSysTrayMenu()
         self.createSysTrayActions()
         self.setGlobalHotkeys()
@@ -26,7 +26,8 @@ class trayApp(QSystemTrayIcon):
         self.setContextMenu(self.sysTrayMenu)
 
     def createSysTrayActions(self):
-        self.sysTrayMenuRegionAction = self.createAction("&Capture region", self.createDrawSurface, "Alt+C")
+        self.sysTrayMenuRegionAction = self.createAction("&Capture region", self.createDrawSurface, self.hotkey)
+        self.sysTrayMenuHotkeyAction = self.createAction("&Change hotkey...", self.changeHotkey)
         self.sysTrayMenuUploadAction = self.createAction("&Upload to imgur", checkable=True)
         self.sysTrayMenuUploadAction.setChecked(self.upload)
         self.sysTrayMenuSaveAction = self.createAction("&Save locally", checkable=True)
@@ -35,6 +36,7 @@ class trayApp(QSystemTrayIcon):
 
         self.addActions(self.sysTrayMenu, (self.sysTrayMenuRegionAction,
                                            None,
+                                           self.sysTrayMenuHotkeyAction,
                                            self.sysTrayMenuUploadAction,
                                            self.sysTrayMenuSaveAction,
                                            self.sysTrayMenuExitAction))
@@ -61,15 +63,24 @@ class trayApp(QSystemTrayIcon):
             else:
                 target.addAction(action)
 
+    def changeHotkey(self):
+        text, ok = QInputDialog.getText(None, "Change capture hotkey", "Enter a new hotkey (requires restart)", QLineEdit.Normal, self.hotkey)
+        if ok:
+            self.hotkey = text
+
     def loadSettings(self):
         settings = QSettings("ninjapic", "settings")
         self.upload = settings.value("upload").toBool()
         self.save = settings.value("save").toBool()
+        self.hotkey = settings.value("hotkey").toString()
+        if not self.hotkey:
+            self.hotkey = "Alt+C"
 
     def saveSettings(self):
         settings = QSettings("ninjapic", "settings")
         settings.setValue("upload", self.sysTrayMenuUploadAction.isChecked())
         settings.setValue("save", self.sysTrayMenuSaveAction.isChecked())
+        settings.setValue("hotkey", self.hotkey)
 
     def createDrawSurface(self):
         self.surface = Surface()
@@ -78,7 +89,7 @@ class trayApp(QSystemTrayIcon):
 
     def setGlobalHotkeys(self):
         self.sysTrayMenuRegionGlobalHotkey = QxtGlobalShortcut()
-        self.sysTrayMenuRegionGlobalHotkey.setShortcut(QKeySequence("Alt+C"))
+        self.sysTrayMenuRegionGlobalHotkey.setShortcut(QKeySequence(self.hotkey))
         self.sysTrayMenuRegionGlobalHotkey.activated.connect(self.createDrawSurface)
 
     def storeImage(self):
@@ -100,7 +111,7 @@ class trayApp(QSystemTrayIcon):
 
 
 def main():
-    app = QApplication(sys.argv)
+    app = QApplication(sys.argv, quitOnLastWindowClosed=False)
     tray_app = trayApp()
     tray_app.show()
     sys.exit(app.exec_())
