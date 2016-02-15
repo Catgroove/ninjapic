@@ -2,7 +2,7 @@ from surface import Surface
 from custom_widgets import KeySequenceDialog
 from PyQt4.QtCore import QSettings
 from PyQt4.QtGui import (QApplication, QSystemTrayIcon, QIcon, QMenu, QAction,
-                         QKeySequence, QInputDialog, QLineEdit)
+                         QKeySequence, QInputDialog, QLineEdit, QMessageBox)
 from imgurpython import ImgurClient
 from pygs import QxtGlobalShortcut
 
@@ -75,8 +75,6 @@ class trayApp(QSystemTrayIcon):
             self.hotkey = text
             self.sysTrayMenuRegionAction.setShortcut(self.hotkey)
             self.sysTrayMenuRegionGlobalHotkey.setShortcut(QKeySequence(self.hotkey))
-        else:
-            print "Empty"
 
     def loadSettings(self):
         settings = QSettings("ninjapic", "settings")
@@ -104,14 +102,15 @@ class trayApp(QSystemTrayIcon):
 
     def storeImage(self):
         if not self.surface.image.save("screenshot.png", "PNG", -1):
-            return "Couldn't save image: Something went wrong."
-        if self.upload:
+            QMessageBox.warning(None, "Image Error", "The image couldn't be saved.")
+            return
+        if self.sysTrayMenuUploadAction.isChecked():
             uploaded_image = self.imgurClient.upload_from_path("screenshot.png")
             if uploaded_image:
                 link = uploaded_image["link"]
                 self.clipboard.setText(link)
                 webbrowser.open(link)
-        if not self.save:
+        if not self.sysTrayMenuSaveAction.isChecked():
             os.remove("screenshot.png")
 
     def quit(self):
