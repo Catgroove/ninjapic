@@ -108,9 +108,8 @@ class trayApp(QSystemTrayIcon):
         if self.sysTrayMenuUploadAction.isChecked():
             try:
                 uploaded_image = self.imgurClient.upload_image("screenshot.png")
-                link = uploaded_image["link"]
-                self.clipboard.setText(link)
-                webbrowser.open(link)
+                self.clipboard.setText(uploaded_image.link)
+                webbrowser.open(uploaded_image.link)
             except HTTPError, e:
                 self.surface.dispose()
                 QMessageBox.warning(None, "Imgur Error", unicode(e))
