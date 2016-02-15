@@ -3,8 +3,9 @@ from custom_widgets import KeySequenceDialog
 from PyQt4.QtCore import QSettings
 from PyQt4.QtGui import (QApplication, QSystemTrayIcon, QIcon, QMenu, QAction,
                          QKeySequence, QInputDialog, QLineEdit, QMessageBox)
-from imgurpython import ImgurClient
+from pyimgur import Imgur
 from pygs import QxtGlobalShortcut
+from requests.exceptions import HTTPError
 
 import os
 import sys
@@ -17,14 +18,14 @@ class trayApp(QSystemTrayIcon):
         self.loadSettings()
         self.setIcon(QIcon("icon.png"))
         self.createSysTrayMenu()
-        self.createSysTrayActions()
         self.setGlobalHotkeys()
-        self.imgurClient = ImgurClient("", "")
+        self.imgurClient = Imgur("", "")
         self.clipboard = QApplication.clipboard()
 
     def createSysTrayMenu(self):
         self.sysTrayMenu = QMenu()
         self.setContextMenu(self.sysTrayMenu)
+        self.createSysTrayActions()
 
     def createSysTrayActions(self):
         self.sysTrayMenuRegionAction = self.createAction("&Capture region", self.createDrawSurface, self.hotkey)
@@ -105,11 +106,14 @@ class trayApp(QSystemTrayIcon):
             QMessageBox.warning(None, "Image Error", "The image couldn't be saved.")
             return
         if self.sysTrayMenuUploadAction.isChecked():
-            uploaded_image = self.imgurClient.upload_from_path("screenshot.png")
-            if uploaded_image:
+            try:
+                uploaded_image = self.imgurClient.upload_image("screenshot.png")
                 link = uploaded_image["link"]
                 self.clipboard.setText(link)
                 webbrowser.open(link)
+            except HTTPError, e:
+                self.surface.dispose()
+                QMessageBox.warning(None, "Imgur Error", unicode(e))
         if not self.sysTrayMenuSaveAction.isChecked():
             os.remove("screenshot.png")
 

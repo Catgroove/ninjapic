@@ -1,4 +1,5 @@
-imgurpython==1.1.6
+ninjapic==0.1.0
 PyGlobalShortcut==0.2.1
+pyimgur==0.5.3
 requests==2.9.1
 wheel==0.29.0
