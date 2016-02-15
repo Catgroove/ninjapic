@@ -1,7 +1,6 @@
 from helpers import cropImage, getScreenDimensions, captureFullScreen
-
-from PyQt4.QtCore import Qt, QRect, QSize, QPoint, pyqtSignal, QObject
-from PyQt4.QtGui import QLabel, QApplication, QCursor, QRubberBand
+from PyQt4.QtCore import Qt, QRect, QSize, QPoint, pyqtSignal
+from PyQt4.QtGui import QLabel, QCursor, QRubberBand
 
 import sys
 

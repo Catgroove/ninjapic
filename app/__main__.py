@@ -1,4 +1,5 @@
 from surface import Surface
+from custom_widgets import KeySequenceDialog
 from PyQt4.QtCore import QSettings
 from PyQt4.QtGui import (QApplication, QSystemTrayIcon, QIcon, QMenu, QAction,
                          QKeySequence, QInputDialog, QLineEdit)
@@ -27,7 +28,7 @@ class trayApp(QSystemTrayIcon):
 
     def createSysTrayActions(self):
         self.sysTrayMenuRegionAction = self.createAction("&Capture region", self.createDrawSurface, self.hotkey)
-        self.sysTrayMenuHotkeyAction = self.createAction("&Change hotkey...", self.changeHotkey)
+        self.sysTrayMenuHotkeyAction = self.createAction("&Change hotkey...", self.createKeySequenceDialog)
         self.sysTrayMenuUploadAction = self.createAction("&Upload to imgur", checkable=True)
         self.sysTrayMenuUploadAction.setChecked(self.upload)
         self.sysTrayMenuSaveAction = self.createAction("&Save locally", checkable=True)
@@ -63,10 +64,19 @@ class trayApp(QSystemTrayIcon):
             else:
                 target.addAction(action)
 
+    def createKeySequenceDialog(self):
+        self.keySequenceDialog = KeySequenceDialog(self.hotkey)
+        self.keySequenceDialog.accepted.connect(self.changeHotkey)
+        self.keySequenceDialog.show()
+
     def changeHotkey(self):
-        text, ok = QInputDialog.getText(None, "Change capture hotkey", "Enter a new hotkey (requires restart)", QLineEdit.Normal, self.hotkey)
-        if ok:
+        text = self.keySequenceDialog.keySequenceLineEdit.text()
+        if text:
             self.hotkey = text
+            self.sysTrayMenuRegionAction.setShortcut(self.hotkey)
+            self.sysTrayMenuRegionGlobalHotkey.setShortcut(QKeySequence(self.hotkey))
+        else:
+            print "Empty"
 
     def loadSettings(self):
         settings = QSettings("ninjapic", "settings")
